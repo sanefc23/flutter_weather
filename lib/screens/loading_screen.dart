@@ -28,13 +28,19 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
     NetworkHelper networkHelper = NetworkHelper(
         'https://api.openweathermap.org/data/2.5/weather?lat=${location.latitude}&lon=${location.longitude}&appid=$kApiKey&units=metric');
-    var weatherData = await networkHelper.getData();
+    var currentWeatherData = await networkHelper.getData();
+
+    NetworkHelper forecastNetworkHelper = NetworkHelper(
+        'https://api.openweathermap.org/data/2.5/onecall?lat=${location.latitude}&lon=${location.longitude}&%20exclude=current,minutely,hourly&appid=$kApiKey&units=metric');
+    var forecastWeatherData = await forecastNetworkHelper.getData();
 
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(locationWeather: weatherData)));
+            builder: (context) => LocationScreen(
+                  locationWeather: currentWeatherData,
+                  locationForecast: forecastWeatherData,
+                )));
   }
 
   @override

@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
-  LocationScreen({this.locationWeather});
+  LocationScreen({this.locationWeather, this.locationForecast});
 
   final locationWeather;
+  final locationForecast;
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
@@ -16,6 +17,8 @@ class _LocationScreenState extends State<LocationScreen> {
   int condition;
   String cityName;
   WeatherModel weather = WeatherModel();
+  String weatherIcon;
+  String weatherMessage;
 
   @override
   void initState() {
@@ -23,9 +26,13 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   void updateUI(dynamic weatherData) {
-    temperature = (weatherData['main']['temp']).toInt();
-    condition = weatherData['weather'][0]['id'];
-    cityName = weatherData['name'];
+    setState(() {
+      temperature = (weatherData['main']['temp']).toInt();
+      condition = weatherData['weather'][0]['id'];
+      cityName = weatherData['name'];
+      weatherIcon = weather.getWeatherIcon(condition);
+      weatherMessage = weather.getMessage(temperature);
+    });
   }
 
   @override
@@ -79,17 +86,22 @@ class _LocationScreenState extends State<LocationScreen> {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        weather.getWeatherIcon(condition),
+                        weatherIcon,
                         style: kConditionTextStyle,
                         textAlign: TextAlign.center,
                       ),
                     ],
                   ),
+                  Text(
+                    "$cityName",
+                    textAlign: TextAlign.center,
+                    style: kMessageTextStyle,
+                  ),
                   SizedBox(
                     height: 40,
                   ),
                   Text(
-                    "${weather.getMessage(temperature)} $cityName!",
+                    "$weatherMessage.",
                     textAlign: TextAlign.center,
                     style: kMessageTextStyle,
                   ),
