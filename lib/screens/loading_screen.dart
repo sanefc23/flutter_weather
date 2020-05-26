@@ -5,7 +5,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 const spinkit = SpinKitRipple(
   color: Colors.white,
-  size: 150.0,
+  size: 120.0,
 );
 
 class LoadingScreen extends StatefulWidget {
@@ -34,6 +34,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey[800],
       body: Center(
         child: spinkit,

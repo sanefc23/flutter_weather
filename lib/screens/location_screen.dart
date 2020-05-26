@@ -2,6 +2,8 @@ import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 
+import 'city_screen.dart';
+
 class LocationScreen extends StatefulWidget {
   LocationScreen({this.locationWeather});
 
@@ -13,7 +15,6 @@ class LocationScreen extends StatefulWidget {
 
 class _LocationScreenState extends State<LocationScreen> {
   int temperature;
-  int condition;
   String cityName;
   WeatherModel weather = WeatherModel();
   String weatherIcon;
@@ -21,13 +22,21 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   void initState() {
+    super.initState();
     updateUI(widget.locationWeather);
   }
 
   void updateUI(dynamic weatherData) {
     setState(() {
+      if (weatherData == null) {
+        temperature = 0;
+        weatherIcon = '🥴';
+        cityName = 'Error';
+        weatherMessage = 'Unable to get weather data.';
+        return;
+      }
       temperature = (weatherData['main']['temp']).toInt();
-      condition = weatherData['weather'][0]['id'];
+      var condition = weatherData['weather'][0]['id'];
       cityName = weatherData['name'];
       weatherIcon = weather.getWeatherIcon(condition);
       weatherMessage = weather.getMessage(temperature);
@@ -37,13 +46,14 @@ class _LocationScreenState extends State<LocationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/weatherbkg.png'),
+            image: AssetImage('images/bkg2.png'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-                Colors.white.withOpacity(0.8), BlendMode.dstATop),
+                Colors.white.withOpacity(0.5), BlendMode.dstATop),
           ),
         ),
         constraints: BoxConstraints.expand(),
@@ -56,14 +66,24 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: Icon(
                       Icons.near_me,
                       size: 50.0,
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CityScreen(),
+                        ),
+                      );
+                    },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
